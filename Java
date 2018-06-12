@@ -1,0 +1,40 @@
+package room;
+
+import java.io.*;
+import java.rmi.*;
+
+public class RoomServer {
+    
+    final static String NAME_SERVICE =
+    "rmi://jannote.dstc.edu.au/";
+    
+    public static void main(String[] args){
+        String context_name, str_name;
+        
+        if( args.length < 1 ){
+            System.out.println(
+                "Usage: room.RoomServer room_name");
+                System.exit( 1 ); 
+        }
+        
+        System.setSecurityManager(new
+        RMISecurityManager());
+        
+        context_name = new
+        String("BuildingApplications/Rooms/");
+        
+        try {
+            // create the Room object
+            String roomName = args[0];
+            RoomImpl room = new RoomImpl(roomName);
+            //register with naming NAME_SERVICE
+            String path = NAME_SERVICE +
+            context_name + roomName;
+            
+            Naming.rebind(path, room);
+        } catch(Exception e){
+            e.printStackTrace();
+            System.exit(1);
+        }
+    }
+}
